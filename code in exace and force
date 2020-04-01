@@ -17,51 +17,32 @@ PID of hello.c =3341
 code in forke:
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>
-
 #include <sys/types.h>
 #include <sys/wait.h>
-
-int main() {
-/*pid_t is data type stands for process identification and it is used to represent process ids.*/
-pid_t forkStatus;
-
-forkStatus = fork();
-
-/* Child... */
-if        (forkStatus == 0) {
-printf("Child is running, processing.\n");
-sleep(5);
-printf("Child is done, exiting.\n");
-
-/* Parent... */
-} else if (forkStatus != -1) {
-printf("Parent is waiting...\n");
-
-wait(NULL);
-printf("Parent is exiting...\n");
-
-} else {
-perror("Error while calling the fork function");
-
+#include <unistd.h>
+ 
+int main(void) {
+  pid_t pid = fork();
+ 
+  if(pid == 0) {
+    printf("Child => PPID: %d PID: %d\n", getppid(), getpid());
+    exit(EXIT_SUCCESS);
+  }
+  else if(pid > 0) {
+    printf("Parent => PID: %d\n", getpid());
+    printf("Waiting for child process to finish.\n");
+    wait(NULL);
+    printf("Child process finished.\n");
+  }
+  else {
+    printf("Unable to create child process.\n");
+  }
+ 
+  return EXIT_SUCCESS;
 }
+run///
+Child => PPID:406
+Waiting for child process to finish
+Child => PPID:406   PPID:407
+Child process finished
 
-return 0;
-}
-run//
-Child is running, processing
-Child is done, exiting
-Parent is exiting
-
-
-
-
-
-
-
-
-
-
-
-
-run
